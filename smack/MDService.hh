@@ -12,10 +12,7 @@ namespace smack
 class MDServiceCallback
 {
  public:
-
-  virtual void onReceiveNormal(const quote_head*, quote_normal* data) = 0;
-
-  virtual void onReceiveSummary(const quote_head*, quote_summary* data) = 0;
+  virtual void onReceiveNormal(const guava_udp_normal* data) = 0;
 
   virtual ~MDServiceCallback() {}
 };

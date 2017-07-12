@@ -40,27 +40,17 @@ void MDServiceImpl::on_receive_message(int id, const char* buff, unsigned int le
   SMACK_DEBUG <<"id: " <<id
               <<" msg len: " <<len;
   
-  if( !callback_ )
-  {
+  if (!callback_)  {
     return;
   }
 
-  if( len<(sizeof(quote_head) + sizeof(quote_normal)) )
-  {
-    return;
-  }
+  if (len < sizeof(guava_udp_normal))	{
+		return;
+	}
 
-  quote_head* ptr_head = (quote_head*)buff;
-  if (ptr_head->m_quote_flag != QUOTE_FLAG_SUMMARY)
-  {
-    quote_normal* ptr_data = (quote_normal*)(buff + sizeof(quote_head));
-    callback_->onReceiveNormal(ptr_head, ptr_data);
-  }
-  else
-  {
-    quote_summary* ptr_data = (quote_summary*)(buff + sizeof(quote_head));
-    callback_->onReceiveSummary(ptr_head, ptr_data);
-  }
+	guava_udp_normal* ptr_data = (guava_udp_normal*)(buff);
+  
+  callback_->onReceiveNormal(ptr_data);
 }
 
 soil::Options* MDService::createOptions()
