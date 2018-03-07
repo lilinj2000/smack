@@ -1,0 +1,26 @@
+{
+    "smack": {
+        "multi_ip": "233.54.1.100", 
+        "multi_port": 30100,
+        "local_ip": "72.31.0.4"
+    }, 
+    "log": {
+        "level": "trace", 
+        "sinks": [
+            {
+                "sink": {
+                    "level": "trace", 
+                    "type": "stdout_sink_mt"
+                }
+            }, 
+            {
+                "sink": {
+                    "file_name": "smack.log", 
+                    "max_file_size": 5000000, 
+                    "max_files": 10, 
+                    "type": "rotating_file_sink_mt"
+                }
+            }
+        ]
+    }
+}

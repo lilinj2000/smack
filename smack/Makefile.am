@@ -5,7 +5,7 @@ include_HEADERS =
 
 noinst_HEADERS = 
 
-EXTRA_DIST = MDService.hh SmackDef.hh
+EXTRA_DIST = md_service.h def.h
 
 headerdir = $(includedir)/smack
 header_DATA = $(EXTRA_DIST)

@@ -15,7 +15,6 @@
 
 @SET_MAKE@
 
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -35,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = unittest$(EXEEXT)
+check_PROGRAMS = unittest$(EXEEXT)
 subdir = utest
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -49,12 +48,12 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-PROGRAMS = $(noinst_PROGRAMS)
-am_unittest_OBJECTS = unittest-MDServiceImplTest.$(OBJEXT)
+am_unittest_OBJECTS = unittest-md_service_test.$(OBJEXT)
 unittest_OBJECTS = $(am_unittest_OBJECTS)
 am__DEPENDENCIES_1 =
 unittest_DEPENDENCIES = $(am__DEPENDENCIES_1) ../service/libsmack.la \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 unittest_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(unittest_LDFLAGS) $(LDFLAGS) -o $@
@@ -145,6 +144,9 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FMT_CPPFLAGS = @FMT_CPPFLAGS@
+FMT_HOME = @FMT_HOME@
+FMT_LIBADD = @FMT_LIBADD@
 GREP = @GREP@
 GTEST_CPPFLAGS = @GTEST_CPPFLAGS@
 GTEST_HOME = @GTEST_HOME@
@@ -183,12 +185,16 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
+RAPIDJSON_CPPFLAGS = @RAPIDJSON_CPPFLAGS@
+RAPIDJSON_HOME = @RAPIDJSON_HOME@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SOIL_CPPFLAGS = @SOIL_CPPFLAGS@
 SOIL_HOME = @SOIL_HOME@
 SOIL_LIBADD = @SOIL_LIBADD@
+SPDLOG_CPPFLAGS = @SPDLOG_CPPFLAGS@
+SPDLOG_HOME = @SPDLOG_HOME@
 STRIP = @STRIP@
 VERSION = @VERSION@
 abs_builddir = @abs_builddir@
@@ -215,6 +221,8 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+home_3rd = @home_3rd@
+home_libs = @home_libs@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -247,24 +255,29 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = 
 unittest_SOURCES = \
-	MDServiceImplTest.cc
+	md_service_test.cc
 
-unittest_CPPFLAGS = -I$(top_srcdir) -I.. -I..\
-		$(BOOST_CPPFLAGS) \
-		$(GTEST_CPPFLAGS) \
-		$(SOIL_CPPFLAGS)
+unittest_CPPFLAGS = \
+	-I$(top_srcdir) \
+	$(BOOST_CPPFLAGS) \
+	$(GTEST_CPPFLAGS) \
+	$(SOIL_CPPFLAGS) \
+	$(RAPIDJSON_CPPFLAGS) \
+	$(FMT_CPPFLAGS) \
+	$(SPDLOG_CPPFLAGS)
 
 unittest_LDADD = \
 	$(GTEST_LIBADD) \
 	../service/libsmack.la \
 	$(BOOST_LIBADD) \
-	$(SOIL_LIBADD)
+	$(SOIL_LIBADD) \
+	$(FMT_LIBADD)
 
 unittest_LDFLAGS = $(LIBADD_DL) -Wl,--no-as-needed -pthread
 
 # header files
 noinst_HEADERS = 
-EXTRA_DIST = log.cfg smack.cfg env.sh
+EXTRA_DIST = smack.json env.sh
 all: all-recursive
 
 .SUFFIXES:
@@ -300,8 +313,8 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 
-clean-noinstPROGRAMS:
-	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
+clean-checkPROGRAMS:
+	@list='$(check_PROGRAMS)'; test -n "$$list" || exit 0; \
 	echo " rm -f" $$list; \
 	rm -f $$list || exit $$?; \
 	test -n "$(EXEEXT)" || exit 0; \
@@ -318,7 +331,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unittest-MDServiceImplTest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unittest-md_service_test.Po@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -341,19 +354,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
-unittest-MDServiceImplTest.o: MDServiceImplTest.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(unittest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT unittest-MDServiceImplTest.o -MD -MP -MF $(DEPDIR)/unittest-MDServiceImplTest.Tpo -c -o unittest-MDServiceImplTest.o `test -f 'MDServiceImplTest.cc' || echo '$(srcdir)/'`MDServiceImplTest.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/unittest-MDServiceImplTest.Tpo $(DEPDIR)/unittest-MDServiceImplTest.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='MDServiceImplTest.cc' object='unittest-MDServiceImplTest.o' libtool=no @AMDEPBACKSLASH@
+unittest-md_service_test.o: md_service_test.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(unittest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT unittest-md_service_test.o -MD -MP -MF $(DEPDIR)/unittest-md_service_test.Tpo -c -o unittest-md_service_test.o `test -f 'md_service_test.cc' || echo '$(srcdir)/'`md_service_test.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/unittest-md_service_test.Tpo $(DEPDIR)/unittest-md_service_test.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='md_service_test.cc' object='unittest-md_service_test.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(unittest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o unittest-MDServiceImplTest.o `test -f 'MDServiceImplTest.cc' || echo '$(srcdir)/'`MDServiceImplTest.cc
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(unittest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o unittest-md_service_test.o `test -f 'md_service_test.cc' || echo '$(srcdir)/'`md_service_test.cc
 
-unittest-MDServiceImplTest.obj: MDServiceImplTest.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(unittest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT unittest-MDServiceImplTest.obj -MD -MP -MF $(DEPDIR)/unittest-MDServiceImplTest.Tpo -c -o unittest-MDServiceImplTest.obj `if test -f 'MDServiceImplTest.cc'; then $(CYGPATH_W) 'MDServiceImplTest.cc'; else $(CYGPATH_W) '$(srcdir)/MDServiceImplTest.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/unittest-MDServiceImplTest.Tpo $(DEPDIR)/unittest-MDServiceImplTest.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='MDServiceImplTest.cc' object='unittest-MDServiceImplTest.obj' libtool=no @AMDEPBACKSLASH@
+unittest-md_service_test.obj: md_service_test.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(unittest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT unittest-md_service_test.obj -MD -MP -MF $(DEPDIR)/unittest-md_service_test.Tpo -c -o unittest-md_service_test.obj `if test -f 'md_service_test.cc'; then $(CYGPATH_W) 'md_service_test.cc'; else $(CYGPATH_W) '$(srcdir)/md_service_test.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/unittest-md_service_test.Tpo $(DEPDIR)/unittest-md_service_test.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='md_service_test.cc' object='unittest-md_service_test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(unittest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o unittest-MDServiceImplTest.obj `if test -f 'MDServiceImplTest.cc'; then $(CYGPATH_W) 'MDServiceImplTest.cc'; else $(CYGPATH_W) '$(srcdir)/MDServiceImplTest.cc'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(unittest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o unittest-md_service_test.obj `if test -f 'md_service_test.cc'; then $(CYGPATH_W) 'md_service_test.cc'; else $(CYGPATH_W) '$(srcdir)/md_service_test.cc'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -555,8 +568,9 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 check: check-recursive
-all-am: Makefile $(PROGRAMS) $(HEADERS)
+all-am: Makefile $(HEADERS)
 installdirs: installdirs-recursive
 installdirs-am:
 install: install-recursive
@@ -586,7 +600,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
+clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-recursive
@@ -655,12 +669,12 @@ ps-am:
 
 uninstall-am:
 
-.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) ctags-recursive \
-	install-am install-strip tags-recursive
+.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) check-am \
+	ctags-recursive install-am install-strip tags-recursive
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
-	all all-am check check-am clean clean-generic clean-libtool \
-	clean-noinstPROGRAMS ctags ctags-recursive distclean \
+	all all-am check check-am clean clean-checkPROGRAMS \
+	clean-generic clean-libtool ctags ctags-recursive distclean \
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \

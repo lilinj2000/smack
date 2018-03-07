@@ -72,9 +72,10 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-libsmack_la_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-am_libsmack_la_OBJECTS = libsmack_la-SocketMulticast.lo \
-	libsmack_la-MDOptions.lo libsmack_la-MDServiceImpl.lo
+libsmack_la_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am_libsmack_la_OBJECTS = libsmack_la-socket_multicast.lo \
+	libsmack_la-md_options.lo libsmack_la-md_service_impl.lo
 libsmack_la_OBJECTS = $(am_libsmack_la_OBJECTS)
 libsmack_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -128,6 +129,9 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FMT_CPPFLAGS = @FMT_CPPFLAGS@
+FMT_HOME = @FMT_HOME@
+FMT_LIBADD = @FMT_LIBADD@
 GREP = @GREP@
 GTEST_CPPFLAGS = @GTEST_CPPFLAGS@
 GTEST_HOME = @GTEST_HOME@
@@ -166,12 +170,16 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
+RAPIDJSON_CPPFLAGS = @RAPIDJSON_CPPFLAGS@
+RAPIDJSON_HOME = @RAPIDJSON_HOME@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SOIL_CPPFLAGS = @SOIL_CPPFLAGS@
 SOIL_HOME = @SOIL_HOME@
 SOIL_LIBADD = @SOIL_LIBADD@
+SPDLOG_CPPFLAGS = @SPDLOG_CPPFLAGS@
+SPDLOG_HOME = @SPDLOG_HOME@
 STRIP = @STRIP@
 VERSION = @VERSION@
 abs_builddir = @abs_builddir@
@@ -198,6 +206,8 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+home_3rd = @home_3rd@
+home_libs = @home_libs@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -230,17 +240,22 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
 lib_LTLIBRARIES = libsmack.la
 libsmack_la_SOURCES = \
-		SocketMulticast.cc \
-		MDOptions.cc \
-		MDServiceImpl.cc
+		socket_multicast.cc \
+		md_options.cc \
+		md_service_impl.cc
 
-libsmack_la_CPPFLAGS = -I$(top_srcdir) \
-			$(BOOST_CPPFLAGS) \
-			$(SOIL_CPPFLAGS)
+libsmack_la_CPPFLAGS = \
+	-I$(top_srcdir) \
+	$(BOOST_CPPFLAGS) \
+	$(SOIL_CPPFLAGS) \
+	$(RAPIDJSON_CPPFLAGS) \
+	$(FMT_CPPFLAGS) \
+	$(SPDLOG_CPPFLAGS)
 
-libsmack_la_LIBADD = $(REM_LIBADD) \
-		$(BOOST_LIBADD) \
-		$(SOIL_LIBADD)
+libsmack_la_LIBADD = \
+	$(BOOST_LIBADD) \
+	$(SOIL_LIBADD) \
+	$(FMT_LIBADD)
 
 libsmack_la_LDFLAGS = \
 	-no-undefined -version-info \
@@ -250,10 +265,9 @@ libsmack_la_LDFLAGS = \
 
 # header files
 noinst_HEADERS = \
-	SocketMulticast.hh \
-	MDOptions.hh \
-	MDServiceImpl.hh \
-	SmackLog.hh
+	socket_multicast.h \
+	md_options.h \
+	md_service_impl.h
 
 all: all-am
 
@@ -329,9 +343,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsmack_la-MDOptions.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsmack_la-MDServiceImpl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsmack_la-SocketMulticast.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsmack_la-md_options.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsmack_la-md_service_impl.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsmack_la-socket_multicast.Plo@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -354,26 +368,26 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
-libsmack_la-SocketMulticast.lo: SocketMulticast.cc
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsmack_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libsmack_la-SocketMulticast.lo -MD -MP -MF $(DEPDIR)/libsmack_la-SocketMulticast.Tpo -c -o libsmack_la-SocketMulticast.lo `test -f 'SocketMulticast.cc' || echo '$(srcdir)/'`SocketMulticast.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libsmack_la-SocketMulticast.Tpo $(DEPDIR)/libsmack_la-SocketMulticast.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='SocketMulticast.cc' object='libsmack_la-SocketMulticast.lo' libtool=yes @AMDEPBACKSLASH@
+libsmack_la-socket_multicast.lo: socket_multicast.cc
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsmack_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libsmack_la-socket_multicast.lo -MD -MP -MF $(DEPDIR)/libsmack_la-socket_multicast.Tpo -c -o libsmack_la-socket_multicast.lo `test -f 'socket_multicast.cc' || echo '$(srcdir)/'`socket_multicast.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libsmack_la-socket_multicast.Tpo $(DEPDIR)/libsmack_la-socket_multicast.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='socket_multicast.cc' object='libsmack_la-socket_multicast.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsmack_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libsmack_la-SocketMulticast.lo `test -f 'SocketMulticast.cc' || echo '$(srcdir)/'`SocketMulticast.cc
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsmack_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libsmack_la-socket_multicast.lo `test -f 'socket_multicast.cc' || echo '$(srcdir)/'`socket_multicast.cc
 
-libsmack_la-MDOptions.lo: MDOptions.cc
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsmack_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libsmack_la-MDOptions.lo -MD -MP -MF $(DEPDIR)/libsmack_la-MDOptions.Tpo -c -o libsmack_la-MDOptions.lo `test -f 'MDOptions.cc' || echo '$(srcdir)/'`MDOptions.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libsmack_la-MDOptions.Tpo $(DEPDIR)/libsmack_la-MDOptions.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='MDOptions.cc' object='libsmack_la-MDOptions.lo' libtool=yes @AMDEPBACKSLASH@
+libsmack_la-md_options.lo: md_options.cc
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsmack_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libsmack_la-md_options.lo -MD -MP -MF $(DEPDIR)/libsmack_la-md_options.Tpo -c -o libsmack_la-md_options.lo `test -f 'md_options.cc' || echo '$(srcdir)/'`md_options.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libsmack_la-md_options.Tpo $(DEPDIR)/libsmack_la-md_options.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='md_options.cc' object='libsmack_la-md_options.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsmack_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libsmack_la-MDOptions.lo `test -f 'MDOptions.cc' || echo '$(srcdir)/'`MDOptions.cc
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsmack_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libsmack_la-md_options.lo `test -f 'md_options.cc' || echo '$(srcdir)/'`md_options.cc
 
-libsmack_la-MDServiceImpl.lo: MDServiceImpl.cc
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsmack_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libsmack_la-MDServiceImpl.lo -MD -MP -MF $(DEPDIR)/libsmack_la-MDServiceImpl.Tpo -c -o libsmack_la-MDServiceImpl.lo `test -f 'MDServiceImpl.cc' || echo '$(srcdir)/'`MDServiceImpl.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libsmack_la-MDServiceImpl.Tpo $(DEPDIR)/libsmack_la-MDServiceImpl.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='MDServiceImpl.cc' object='libsmack_la-MDServiceImpl.lo' libtool=yes @AMDEPBACKSLASH@
+libsmack_la-md_service_impl.lo: md_service_impl.cc
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsmack_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libsmack_la-md_service_impl.lo -MD -MP -MF $(DEPDIR)/libsmack_la-md_service_impl.Tpo -c -o libsmack_la-md_service_impl.lo `test -f 'md_service_impl.cc' || echo '$(srcdir)/'`md_service_impl.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libsmack_la-md_service_impl.Tpo $(DEPDIR)/libsmack_la-md_service_impl.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='md_service_impl.cc' object='libsmack_la-md_service_impl.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsmack_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libsmack_la-MDServiceImpl.lo `test -f 'MDServiceImpl.cc' || echo '$(srcdir)/'`MDServiceImpl.cc
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsmack_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libsmack_la-md_service_impl.lo `test -f 'md_service_impl.cc' || echo '$(srcdir)/'`md_service_impl.cc
 
 mostlyclean-libtool:
 	-rm -f *.lo
