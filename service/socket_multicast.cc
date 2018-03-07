@@ -139,9 +139,7 @@ bool SocketMulticast::sock_init(
 }
 
 bool SocketMulticast::sock_close() {
-  bool b_ret = false;
-
-  b_ret = stop_server_event_thread();
+  bool b_ret = stop_server_event_thread();
 
   if (m_sock != MY_SOCKET_DEFAULT) {
     close(m_sock);
@@ -165,8 +163,6 @@ void* SocketMulticast::socket_server_event_thread(
 void* SocketMulticast::on_socket_server_event_thread() {
   char line[RCV_BUF_SIZE] = "";
 
-  int n_rcved = -1;
-
   struct sockaddr_in muticast_addr;
 
   memset(&muticast_addr, 0, sizeof(muticast_addr));
@@ -177,13 +173,14 @@ void* SocketMulticast::on_socket_server_event_thread() {
   while (true) {
     socklen_t len = sizeof(sockaddr_in);
 
-    n_rcved = recvfrom(
+    int n_rcved = recvfrom(
         m_sock,
         line,
         RCV_BUF_SIZE,
         0,
         (struct sockaddr*)&muticast_addr,
         &len);
+
     if (n_rcved < 0) {
       continue;
     } else if (0 == n_rcved) {
