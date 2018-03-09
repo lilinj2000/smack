@@ -1,7 +1,7 @@
 pipeline {
   agent {
     docker {
-      image 'lilinj2000/dev:centos6.gcc'
+      image 'lilinj2000/dev:centos6'
     }
   }
 
