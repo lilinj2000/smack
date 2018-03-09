@@ -39,7 +39,7 @@ class MDOptions {
   virtual ~MDOptions();
 
   std::string multi_ip;
-  uint16_t multi_port;
+  uint_t multi_port;
   std::string local_ip;
 };
 
