@@ -642,9 +642,18 @@ GTEST_HOME
 SOIL_LIBADD
 SOIL_CPPFLAGS
 SOIL_HOME
+SPDLOG_CPPFLAGS
+SPDLOG_HOME
+FMT_LIBADD
+FMT_CPPFLAGS
+FMT_HOME
+RAPIDJSON_CPPFLAGS
+RAPIDJSON_HOME
 BOOST_LIBADD
 BOOST_CPPFLAGS
 BOOST_HOME
+home_libs
+home_3rd
 LT_AGE
 LT_REVISION
 LT_CURRENT
@@ -782,6 +791,9 @@ with_gnu_ld
 with_sysroot
 enable_libtool_lock
 with_boost
+with_rapidjson
+with_fmt
+with_spdlog
 with_soil
 with_gtest
 '
@@ -797,7 +809,9 @@ CCC
 CC
 CFLAGS
 CPP
-CXXCPP'
+CXXCPP
+home_3rd
+home_libs'
 
 
 # Initialize some variables set by options.
@@ -1437,8 +1451,12 @@ Optional Packages:
   --with-sysroot=DIR Search for dependent libraries within DIR
                         (or the compiler's sysroot if not specified).
   --with-boost            home path of the boost, defaults to @S|@home_3rd/boost
+  --with-rapidjson        home path of the rapidjson, defaults to
+                          @S|@RAPIDJSON_HOME
+  --with-fmt              home path of the fmt, defaults to @S|@FMT_HOME
+  --with-spdlog           home path of the spdlog, defaults to @S|@SPDLOG_HOME
   --with-soil             home path of the soil, defaults to @S|@home_libs/soil
-  --with-gtest            home path of the gtest, defaults to @S|@home_3rd/gtest
+  --with-gtest            home path of the gtest, defaults to @S|@GTEST_HOME
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -1452,6 +1470,8 @@ Some influential environment variables:
   CFLAGS      C compiler flags
   CPP         C preprocessor
   CXXCPP      C++ preprocessor
+  home_3rd    home path of 3rd
+  home_libs   home path of libs
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -15292,16 +15312,18 @@ LT_AGE=0
 
 
 
-home_3rd=~/3rd
-home_libs=~/libs
+node=`uname -n`
 
-if test -d /llj/3rd ; then
-   home_3rd=/llj/3rd
+
+if test "x$home_3rd" = "x"; then
+   home_3rd=~/3rd/${node}
 fi
 
-if test -d /llj/libs ; then
-   home_libs=/llj/libs
+
+if test "x$home_libs" = "x"; then
+   home_libs=~/libs/${node}
 fi
+
 
 
 @%:@ Check whether --with-boost was given.
@@ -15314,16 +15336,56 @@ fi
 
 
 BOOST_CPPFLAGS="-I$BOOST_HOME/include -DBOOST_ALL_DYN_LINK"
-BOOST_LIBADD="$BOOST_HOME/lib/libboost_log_setup.so \
-              $BOOST_HOME/lib/libboost_log.so \
+BOOST_LIBADD=" \
 	      $BOOST_HOME/lib/libboost_filesystem.so \
-  	      $BOOST_HOME/lib/libboost_program_options.so \
 	      $BOOST_HOME/lib/libboost_regex.so \
 	      $BOOST_HOME/lib/libboost_thread.so \
-	      $BOOST_HOME/lib/libboost_chrono.so \
-	      $BOOST_HOME/lib/libboost_date_time.so \
 	      $BOOST_HOME/lib/libboost_system.so"
 
+
+
+RAPIDJSON_HOME=$home_3rd/rapidjson
+
+@%:@ Check whether --with-rapidjson was given.
+if test "${with_rapidjson+set}" = set; then :
+  withval=$with_rapidjson; RAPIDJSON_HOME="$withval"
+else
+  RAPIDJSON_HOME="$RAPIDJSON_HOME"
+fi
+
+
+
+RAPIDJSON_CPPFLAGS="-I$RAPIDJSON_HOME/include -DRAPIDJSON_HAS_STDSTRING"
+
+
+FMT_HOME=$home_3rd/fmt
+
+@%:@ Check whether --with-fmt was given.
+if test "${with_fmt+set}" = set; then :
+  withval=$with_fmt; FMT_HOME="$withval"
+else
+  FMT_HOME="$FMT_HOME"
+fi
+
+
+
+FMT_CPPFLAGS="-I$FMT_HOME/include"
+FMT_LIBADD="-L$FMT_HOME/lib -lfmt"
+
+
+
+SPDLOG_HOME=$home_3rd/spdlog
+
+@%:@ Check whether --with-spdlog was given.
+if test "${with_spdlog+set}" = set; then :
+  withval=$with_spdlog; SPDLOG_HOME="$withval"
+else
+  SPDLOG_HOME="$SPDLOG_HOME"
+fi
+
+
+
+SPDLOG_CPPFLAGS="-I$SPDLOG_HOME/include -DSPDLOG_FMT_EXTERNAL"
 
 
 
@@ -15341,12 +15403,13 @@ SOIL_LIBADD="$SOIL_HOME/lib/libsoil.la"
 
 
 
+GTEST_HOME=$home_3rd/googletest
 
 @%:@ Check whether --with-gtest was given.
 if test "${with_gtest+set}" = set; then :
   withval=$with_gtest; GTEST_HOME="$withval"
 else
-  GTEST_HOME="$home_3rd/gtest"
+  GTEST_HOME="$GTEST_HOME"
 fi
 
 
