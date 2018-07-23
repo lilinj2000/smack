@@ -1,6 +1,8 @@
 #! /bin/sh
 
-home_libs=~/libs
+node=`uname -n`
+
+home_libs=~/libs/${node}
 
 home_smack=${home_libs}/smack
 
